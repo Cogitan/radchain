@@ -1,0 +1,616 @@
+--- a/include/QuasiparticleDetectorParameters.hh
++++ b/include/QuasiparticleDetectorParameters.hh
+@@ -20,223 +20,245 @@
+ {
+   //----------------------------------------------------------------
+   //Overall World
+-  constexpr double dp_worldSize = 6.0 * CLHEP::cm;
++  const double dp_worldSize = 6.0 * CLHEP::cm;
+ 
+   //Misc
+   //----------------------------------------------------------------
+-  constexpr double dp_eps = 0.0001*CLHEP::mm;
+-  constexpr double dp_largeEpsilon = 1.0 * CLHEP::um;
++  const double dp_eps = 0.0001*CLHEP::mm;
++  const double dp_largeEpsilon = 1.0 * CLHEP::um;
+   constexpr double pi = 3.141592654;
+ 
+   //----------------------------------------------------------------
+   //Superconductor info
+-  constexpr double dp_polycryElScatMFP_Al = 10 * CLHEP::nm;
+-  constexpr double dp_scDelta0_Al = 0.000176 * CLHEP::eV;
+-  constexpr double dp_scTeff_Al = 0.2 * CLHEP::kelvin;
+-  constexpr double dp_scDn_Al = 6 * CLHEP::um*CLHEP::um / CLHEP::ns;
+-  constexpr double dp_scTauQPTrap_Al = 0.2 * CLHEP::ms;
++  const double dp_polycryElScatMFP_Al = 10 * CLHEP::nm;
++  const double dp_scDelta0_Al = 0.000176 * CLHEP::eV;
++  const double dp_scTeff_Al = 0.2 * CLHEP::kelvin;
++  const double dp_scDn_Al = 6 * CLHEP::um*CLHEP::um / CLHEP::ns;
++  const double dp_scTauQPTrap_Al = 0.2 * CLHEP::ms;
+ 
+   
+   //----------------------------------------------------------------
+   //Silicon chip dimensions
+-  constexpr double dp_siliconChipDimX = 8.0 * CLHEP::mm;
+-  constexpr double dp_siliconChipDimY = 8.0 * CLHEP::mm;
+-  constexpr double dp_siliconChipDimZ = 0.381 * CLHEP::mm;
++  // RAD: chip footprint is overridable at run time (RAD_CHIP_MM). A smaller
++  // die cuts phonon lifetime and memory; without the copper housing a full
++  // 8 mm chip recycles phonons via qpRadiatesPhonon and exhausted the box.
++  inline double dp_radChipMM() {
++    const char* v = std::getenv("RAD_CHIP_MM");
++    return (v && std::atof(v) > 0.0) ? std::atof(v) : 8.0;
++  }
++  const double dp_siliconChipDimX = dp_radChipMM() * CLHEP::mm;
++  const double dp_siliconChipDimY = dp_radChipMM() * CLHEP::mm;
++  // RAD: substrate thickness is runtime (RAD_THICK_MM).
++  //
++  //
++  inline double dp_radThickMM() {
++    const char* v = std::getenv("RAD_THICK_MM");
++    return (v && std::atof(v) > 0.0) ? std::atof(v) : 0.381;
++  }
++  const double dp_siliconChipDimZ = dp_radThickMM() * CLHEP::mm;
+  
+ 
+   //----------------------------------------------------------------
+   //Parameters of the qubit housing (currently copper)
+   constexpr bool dp_useQubitHousing = true;
+-  constexpr double dp_housingDimX = 16.0 * CLHEP::mm;
+-  constexpr double dp_housingDimY = 16.0 * CLHEP::mm;
+-  constexpr double dp_housingDimZ = 1.0 * CLHEP::cm; //Used to be 1
+-  constexpr double dp_housingCentralCutoutDimX = dp_siliconChipDimX + dp_eps;
+-  constexpr double dp_housingCentralCutoutDimY = dp_siliconChipDimY + dp_eps;
+-  constexpr double dp_housingCentralCutoutDimZ = dp_housingDimZ * 0.3;
+-  constexpr double dp_housingRadialCutoutDimX = 1.03 * CLHEP::mm; //Much of the cutout is actually thinner, but the important thing is the corner that the chip sits on (to leading order) - the wall-chip interfaces will be a smidge shorter than in reality, but for now this is fine.
+-  constexpr double dp_housingRadialCutoutDimY = 2 * CLHEP::mm; //Arbitrary, but 2 mm should do the trick
+-  constexpr double dp_housingRadialCutoutDimZ = dp_siliconChipDimZ; //QUBIT IS FLUSH WITH TOP OF HOUSING
++  const double dp_housingDimX = 16.0 * CLHEP::mm;
++  const double dp_housingDimY = 16.0 * CLHEP::mm;
++  const double dp_housingDimZ = 1.0 * CLHEP::cm; //Used to be 1
++  const double dp_housingCentralCutoutDimX = dp_siliconChipDimX + dp_eps;
++  const double dp_housingCentralCutoutDimY = dp_siliconChipDimY + dp_eps;
++  const double dp_housingCentralCutoutDimZ = dp_housingDimZ * 0.3;
++  const double dp_housingRadialCutoutDimX = 1.03 * CLHEP::mm; //Much of the cutout is actually thinner, but the important thing is the corner that the chip sits on (to leading order) - the wall-chip interfaces will be a smidge shorter than in reality, but for now this is fine.
++  const double dp_housingRadialCutoutDimY = 2 * CLHEP::mm; //Arbitrary, but 2 mm should do the trick
++  const double dp_housingRadialCutoutDimZ = dp_siliconChipDimZ; //QUBIT IS FLUSH WITH TOP OF HOUSING
+ 
+   //----------------------------------------------------------------
+   //Parameters of the niobium film ground plane
+-  constexpr double dp_useGroundPlane = true;
+-  constexpr double dp_groundPlaneDimX = dp_siliconChipDimX;
+-  constexpr double dp_groundPlaneDimY = dp_siliconChipDimY;
+-  constexpr double dp_groundPlaneDimZ = 90 * CLHEP::nm;
++  const double dp_useGroundPlane = true;
++  const double dp_groundPlaneDimX = dp_siliconChipDimX;
++  const double dp_groundPlaneDimY = dp_siliconChipDimY;
++  const double dp_groundPlaneDimZ = 90 * CLHEP::nm;
+ 
+   //----------------------------------------------------------------
+   //Parameters of the transmission line
+-  constexpr bool dp_useTransmissionLine = true;
+-  constexpr double dp_transmissionLineBaseLayerDimY = 626 * CLHEP::um;
+-  constexpr double dp_transmissionLineBaseLayerDimX = dp_groundPlaneDimX;
+-  constexpr double dp_transmissionLineBaseLayerDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_transmissionLineCavityFullWidth = 22 * CLHEP::um;
+-  constexpr double dp_transmissionLineConductorWidth = 10 * CLHEP::um;
+-  constexpr double dp_transmissionLinePad1Offset = -3562.5 * CLHEP::um;
+-  constexpr double dp_transmissionLinePad2Offset = 3562.5 * CLHEP::um;
++  // RAD: RAD_PLAIN=1 strips the resonator assembly, transmission line and flux
++  // lines, leaving a plain ground plane. Those structures are sized for an 8 mm
++  // die and hang off the edge of a smaller one; a plain film is also the
++  // controlled case for a trap-placement test.
++  inline bool dp_radPlain() {
++    const char* v = std::getenv("RAD_PLAIN");
++    return v && std::atoi(v);
++  }
++  const bool dp_useTransmissionLine = !dp_radPlain();
++  const double dp_transmissionLineBaseLayerDimY = 626 * CLHEP::um;
++  const double dp_transmissionLineBaseLayerDimX = dp_groundPlaneDimX;
++  const double dp_transmissionLineBaseLayerDimZ = dp_groundPlaneDimZ;
++  const double dp_transmissionLineCavityFullWidth = 22 * CLHEP::um;
++  const double dp_transmissionLineConductorWidth = 10 * CLHEP::um;
++  const double dp_transmissionLinePad1Offset = -3562.5 * CLHEP::um;
++  const double dp_transmissionLinePad2Offset = 3562.5 * CLHEP::um;
+ 
+   
+   //----------------------------------------------------------------
+   //Generic pad parameters. (Pad as defined here is arrow pointing to right)
+-  constexpr double dp_padEmptyPart1DimX = 500 * CLHEP::um;
+-  constexpr double dp_padEmptyPart1DimY = 625 * CLHEP::um;
+-  constexpr double dp_padEmptyPart1DimZ = dp_groundPlaneDimZ;
++  const double dp_padEmptyPart1DimX = 500 * CLHEP::um;
++  const double dp_padEmptyPart1DimY = 625 * CLHEP::um;
++  const double dp_padEmptyPart1DimZ = dp_groundPlaneDimZ;
+   
+   //This part of the pad has to get rotated, unfortunately, so the X, Y, and Z parameters
+   //are pre-rotation for clarity of definition, rather than consistency with the rest of the
+   //variables here.
+-  constexpr double dp_padEmptyPart2TrdZ = 233.432 * CLHEP::um;
+-  constexpr double dp_padEmptyPart2TrdX1 = dp_padEmptyPart1DimY;
+-  constexpr double dp_padEmptyPart2TrdX2 = dp_transmissionLineCavityFullWidth;
+-  constexpr double dp_padEmptyPart2TrdY1 = dp_padEmptyPart1DimZ;
+-  constexpr double dp_padEmptyPart2TrdY2 = dp_padEmptyPart1DimZ;
++  const double dp_padEmptyPart2TrdZ = 233.432 * CLHEP::um;
++  const double dp_padEmptyPart2TrdX1 = dp_padEmptyPart1DimY;
++  const double dp_padEmptyPart2TrdX2 = dp_transmissionLineCavityFullWidth;
++  const double dp_padEmptyPart2TrdY1 = dp_padEmptyPart1DimZ;
++  const double dp_padEmptyPart2TrdY2 = dp_padEmptyPart1DimZ;
+ 
+   //Non-empty parts of the pad
+-  constexpr double dp_padPart1DimX = 375 * CLHEP::um;
+-  constexpr double dp_padPart1DimY = 375 * CLHEP::um;
+-  constexpr double dp_padPart1DimZ = dp_groundPlaneDimZ;
++  const double dp_padPart1DimX = 375 * CLHEP::um;
++  const double dp_padPart1DimY = 375 * CLHEP::um;
++  const double dp_padPart1DimZ = dp_groundPlaneDimZ;
+   
+   //This part of the pad has to get rotated, unfortunately, so the X, Y, and Z parameters
+   //are pre-rotation for clarity of definition, rather than consistency with the rest of the
+   //variables here.
+-  constexpr double dp_padPart2TrdZ = 233.432 * CLHEP::um;
+-  constexpr double dp_padPart2TrdX1 = dp_padPart1DimY;
+-  constexpr double dp_padPart2TrdX2 = dp_transmissionLineConductorWidth;
+-  constexpr double dp_padPart2TrdY1 = dp_padPart1DimZ;
+-  constexpr double dp_padPart2TrdY2 = dp_padPart1DimZ;
+-  constexpr double dp_padPart2InternalShiftX = (dp_padEmptyPart1DimX-dp_padPart1DimX)/2.0;
++  const double dp_padPart2TrdZ = 233.432 * CLHEP::um;
++  const double dp_padPart2TrdX1 = dp_padPart1DimY;
++  const double dp_padPart2TrdX2 = dp_transmissionLineConductorWidth;
++  const double dp_padPart2TrdY1 = dp_padPart1DimZ;
++  const double dp_padPart2TrdY2 = dp_padPart1DimZ;
++  const double dp_padPart2InternalShiftX = (dp_padEmptyPart1DimX-dp_padPart1DimX)/2.0;
+ 
+   //----------------------------------------------------------------
+   //Resonator assembly parameters. Y extent of the mother volume goes from the transmission line cavity side to
+   //the flux line cavity side.
+-  constexpr bool dp_useResonatorAssembly = true;
+-  constexpr double dp_resonatorAssemblyBaseAlDimX = 891.618 * CLHEP::um;
+-  constexpr double dp_resonatorAssemblyBaseAlDimY = 1925.311 * CLHEP::um;
+-  constexpr double dp_resonatorAssemblyBaseAlDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_resonatorAssemblyBaseAlEdgeBottomDimY = 5.0 * CLHEP::um; //Separation between the transmission line empty edge and the nearby resonator empty edge
+-  
+-  constexpr double dp_tlCouplingEmptyDimX = 447.518 * CLHEP::um;
+-  constexpr double dp_tlCouplingEmptyDimY = 22 * CLHEP::um;
+-  constexpr double dp_tlCouplingEmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_tlCouplingConductorDimX = dp_tlCouplingEmptyDimX;
+-  constexpr double dp_tlCouplingConductorDimY = 10 * CLHEP::um;
+-  constexpr double dp_tlCouplingConductorDimZ = dp_groundPlaneDimZ;
++  const bool dp_useResonatorAssembly = !dp_radPlain();
++  const double dp_resonatorAssemblyBaseAlDimX = 891.618 * CLHEP::um;
++  const double dp_resonatorAssemblyBaseAlDimY = 1925.311 * CLHEP::um;
++  const double dp_resonatorAssemblyBaseAlDimZ = dp_groundPlaneDimZ;
++  const double dp_resonatorAssemblyBaseAlEdgeBottomDimY = 5.0 * CLHEP::um; //Separation between the transmission line empty edge and the nearby resonator empty edge
++  
++  const double dp_tlCouplingEmptyDimX = 447.518 * CLHEP::um;
++  const double dp_tlCouplingEmptyDimY = 22 * CLHEP::um;
++  const double dp_tlCouplingEmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_tlCouplingConductorDimX = dp_tlCouplingEmptyDimX;
++  const double dp_tlCouplingConductorDimY = 10 * CLHEP::um;
++  const double dp_tlCouplingConductorDimZ = dp_groundPlaneDimZ;
+ 
+   //Curve parameters
+-  constexpr double dp_resonatorAssemblyCurveSmallestRadius = 88.763 * CLHEP::um;
+-  constexpr double dp_resonatorAssemblyCurveCentralRadius = dp_resonatorAssemblyCurveSmallestRadius + dp_tlCouplingEmptyDimY / 2.0;
+-  constexpr double dp_curveEmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_resonatorAssemblyCurveSmallestRadius = 88.763 * CLHEP::um;
++  const double dp_resonatorAssemblyCurveCentralRadius = dp_resonatorAssemblyCurveSmallestRadius + dp_tlCouplingEmptyDimY / 2.0;
++  const double dp_curveEmptyDimZ = dp_groundPlaneDimZ;
+ 
+   //Straight horizontal line 1
+-  constexpr double dp_shl1EmptyDimX = 52.642*CLHEP::um;
+-  constexpr double dp_shl1EmptyDimY = dp_tlCouplingEmptyDimY;
+-  constexpr double dp_shl1EmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shl1ConductorDimX = dp_shl1EmptyDimX;
+-  constexpr double dp_shl1ConductorDimY = dp_tlCouplingConductorDimY;
+-  constexpr double dp_shl1ConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_shl1EmptyDimX = 52.642*CLHEP::um;
++  const double dp_shl1EmptyDimY = dp_tlCouplingEmptyDimY;
++  const double dp_shl1EmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_shl1ConductorDimX = dp_shl1EmptyDimX;
++  const double dp_shl1ConductorDimY = dp_tlCouplingConductorDimY;
++  const double dp_shl1ConductorDimZ = dp_groundPlaneDimZ;
+ 
+   //No extra params needed for half circle 1
+   
+   //Straight horizontal line 2
+-  constexpr double dp_shl2EmptyDimX = 287.796*CLHEP::um;
+-  constexpr double dp_shl2EmptyDimY = dp_tlCouplingEmptyDimY;
+-  constexpr double dp_shl2EmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shl2ConductorDimX = dp_shl2EmptyDimX;
+-  constexpr double dp_shl2ConductorDimY = dp_tlCouplingConductorDimY;
+-  constexpr double dp_shl2ConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_shl2EmptyDimX = 287.796*CLHEP::um;
++  const double dp_shl2EmptyDimY = dp_tlCouplingEmptyDimY;
++  const double dp_shl2EmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_shl2ConductorDimX = dp_shl2EmptyDimX;
++  const double dp_shl2ConductorDimY = dp_tlCouplingConductorDimY;
++  const double dp_shl2ConductorDimZ = dp_groundPlaneDimZ;
+ 
+   //No extra params needed for half circle 2
+   
+   //Straight horizontal line 3
+-  constexpr double dp_shl3EmptyDimX = dp_shl2EmptyDimX;
+-  constexpr double dp_shl3EmptyDimY = dp_tlCouplingEmptyDimY;
+-  constexpr double dp_shl3EmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shl3ConductorDimX = dp_shl3EmptyDimX;
+-  constexpr double dp_shl3ConductorDimY = dp_tlCouplingConductorDimY;
+-  constexpr double dp_shl3ConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_shl3EmptyDimX = dp_shl2EmptyDimX;
++  const double dp_shl3EmptyDimY = dp_tlCouplingEmptyDimY;
++  const double dp_shl3EmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_shl3ConductorDimX = dp_shl3EmptyDimX;
++  const double dp_shl3ConductorDimY = dp_tlCouplingConductorDimY;
++  const double dp_shl3ConductorDimZ = dp_groundPlaneDimZ;
+ 
+   //No extra params needed for half circle 3
+   
+   //Straight horizontal line 4
+-  constexpr double dp_shl4EmptyDimX = dp_shl3EmptyDimX;
+-  constexpr double dp_shl4EmptyDimY = dp_tlCouplingEmptyDimY;
+-  constexpr double dp_shl4EmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shl4ConductorDimX = dp_shl4EmptyDimX;
+-  constexpr double dp_shl4ConductorDimY = dp_tlCouplingConductorDimY;
+-  constexpr double dp_shl4ConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_shl4EmptyDimX = dp_shl3EmptyDimX;
++  const double dp_shl4EmptyDimY = dp_tlCouplingEmptyDimY;
++  const double dp_shl4EmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_shl4ConductorDimX = dp_shl4EmptyDimX;
++  const double dp_shl4ConductorDimY = dp_tlCouplingConductorDimY;
++  const double dp_shl4ConductorDimZ = dp_groundPlaneDimZ;
+ 
+   //Straight horizontal line 5
+-  constexpr double dp_shl5EmptyDimX = dp_shl3EmptyDimX;
+-  constexpr double dp_shl5EmptyDimY = dp_tlCouplingEmptyDimY;
+-  constexpr double dp_shl5EmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shl5ConductorDimX = dp_shl5EmptyDimX;
+-  constexpr double dp_shl5ConductorDimY = dp_tlCouplingConductorDimY;
+-  constexpr double dp_shl5ConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_shl5EmptyDimX = dp_shl3EmptyDimX;
++  const double dp_shl5EmptyDimY = dp_tlCouplingEmptyDimY;
++  const double dp_shl5EmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_shl5ConductorDimX = dp_shl5EmptyDimX;
++  const double dp_shl5ConductorDimY = dp_tlCouplingConductorDimY;
++  const double dp_shl5ConductorDimZ = dp_groundPlaneDimZ;
+ 
+   //Straight horizontal line 6
+-  constexpr double dp_shl6EmptyDimX = dp_shl3EmptyDimX;
+-  constexpr double dp_shl6EmptyDimY = dp_tlCouplingEmptyDimY;
+-  constexpr double dp_shl6EmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shl6ConductorDimX = dp_shl6EmptyDimX;
+-  constexpr double dp_shl6ConductorDimY = dp_tlCouplingConductorDimY;
+-  constexpr double dp_shl6ConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_shl6EmptyDimX = dp_shl3EmptyDimX;
++  const double dp_shl6EmptyDimY = dp_tlCouplingEmptyDimY;
++  const double dp_shl6EmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_shl6ConductorDimX = dp_shl6EmptyDimX;
++  const double dp_shl6ConductorDimY = dp_tlCouplingConductorDimY;
++  const double dp_shl6ConductorDimZ = dp_groundPlaneDimZ;
+ 
+   //Straight horizontal line 7
+-  constexpr double dp_shl7EmptyDimX = 44.705*CLHEP::um;
+-  constexpr double dp_shl7EmptyDimY = dp_tlCouplingEmptyDimY;
+-  constexpr double dp_shl7EmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shl7ConductorDimX = dp_shl7EmptyDimX;
+-  constexpr double dp_shl7ConductorDimY = dp_tlCouplingConductorDimY;
+-  constexpr double dp_shl7ConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_shl7EmptyDimX = 44.705*CLHEP::um;
++  const double dp_shl7EmptyDimY = dp_tlCouplingEmptyDimY;
++  const double dp_shl7EmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_shl7ConductorDimX = dp_shl7EmptyDimX;
++  const double dp_shl7ConductorDimY = dp_tlCouplingConductorDimY;
++  const double dp_shl7ConductorDimZ = dp_groundPlaneDimZ;
+ 
+ 
+   //Straight vertical line 1
+-  constexpr double dp_svl1EmptyDimX = dp_tlCouplingEmptyDimY;
+-  constexpr double dp_svl1EmptyDimY = 47.611*CLHEP::um;
+-  constexpr double dp_svl1EmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_svl1ConductorDimX = dp_tlCouplingConductorDimY;
+-  constexpr double dp_svl1ConductorDimY = dp_svl1EmptyDimY;
+-  constexpr double dp_svl1ConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_svl1EmptyDimX = dp_tlCouplingEmptyDimY;
++  const double dp_svl1EmptyDimY = 47.611*CLHEP::um;
++  const double dp_svl1EmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_svl1ConductorDimX = dp_tlCouplingConductorDimY;
++  const double dp_svl1ConductorDimY = dp_svl1EmptyDimY;
++  const double dp_svl1ConductorDimZ = dp_groundPlaneDimZ;
+ 
+ 
+   //Shunt coupler
+-  constexpr double dp_shuntCouplerHorizontalEmptyDimX = 194.614*CLHEP::um;
+-  constexpr double dp_shuntCouplerHorizontalEmptyDimY = 38.206*CLHEP::um;
+-  constexpr double dp_shuntCouplerHorizontalEmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shuntCouplerHorizontalConductorDimX = 187.451*CLHEP::um;
+-  constexpr double dp_shuntCouplerHorizontalConductorDimY = 31.64*CLHEP::um;
+-  constexpr double dp_shuntCouplerHorizontalConductorDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shuntCouplerHorizontalConductorNubDimX = dp_tlCouplingConductorDimY;
+-  constexpr double dp_shuntCouplerHorizontalConductorNubDimY = 0.5*(dp_shuntCouplerHorizontalEmptyDimY-dp_shuntCouplerHorizontalConductorDimY);
+-  constexpr double dp_shuntCouplerHorizontalConductorNubDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shuntCouplerLobeEmptyDimX = 58.187*CLHEP::um;
+-  constexpr double dp_shuntCouplerLobeEmptyDimY = 58.187*CLHEP::um;
+-  constexpr double dp_shuntCouplerLobeEmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shuntCouplerLobeConductorDimX = 50.000*CLHEP::um;
+-  constexpr double dp_shuntCouplerLobeConductorDimY = 55.957*CLHEP::um;
+-  constexpr double dp_shuntCouplerLobeConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_shuntCouplerHorizontalEmptyDimX = 194.614*CLHEP::um;
++  const double dp_shuntCouplerHorizontalEmptyDimY = 38.206*CLHEP::um;
++  const double dp_shuntCouplerHorizontalEmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_shuntCouplerHorizontalConductorDimX = 187.451*CLHEP::um;
++  const double dp_shuntCouplerHorizontalConductorDimY = 31.64*CLHEP::um;
++  const double dp_shuntCouplerHorizontalConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_shuntCouplerHorizontalConductorNubDimX = dp_tlCouplingConductorDimY;
++  const double dp_shuntCouplerHorizontalConductorNubDimY = 0.5*(dp_shuntCouplerHorizontalEmptyDimY-dp_shuntCouplerHorizontalConductorDimY);
++  const double dp_shuntCouplerHorizontalConductorNubDimZ = dp_groundPlaneDimZ;
++  const double dp_shuntCouplerLobeEmptyDimX = 58.187*CLHEP::um;
++  const double dp_shuntCouplerLobeEmptyDimY = 58.187*CLHEP::um;
++  const double dp_shuntCouplerLobeEmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_shuntCouplerLobeConductorDimX = 50.000*CLHEP::um;
++  const double dp_shuntCouplerLobeConductorDimY = 55.957*CLHEP::um;
++  const double dp_shuntCouplerLobeConductorDimZ = dp_groundPlaneDimZ;
+ 
+ 
+   //Shunt itself
+-  constexpr double dp_shuntCenterToBottomRightCornerOfBaseLayerDimX = 555 *CLHEP::um;//617.5 * CLHEP::um;
+-  constexpr double dp_shuntCenterToBottomRightCornerOfBaseLayerDimY = 1762.118 * CLHEP::um;
+-  constexpr double dp_shuntHorizontalBlockEmptyDimX = 304. * CLHEP::um;
+-  constexpr double dp_shuntHorizontalBlockEmptyDimY = 72. * CLHEP::um;
+-  constexpr double dp_shuntHorizontalBlockEmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shuntVertBlockEmptyDimX = dp_shuntHorizontalBlockEmptyDimY;
+-  constexpr double dp_shuntVertBlockEmptyDimY = dp_shuntHorizontalBlockEmptyDimX;
+-  constexpr double dp_shuntVertBlockEmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shuntHorizontalBlockConductorDimX = 280. * CLHEP::um;
+-  constexpr double dp_shuntHorizontalBlockConductorDimY = 24. * CLHEP::um;
+-  constexpr double dp_shuntHorizontalBlockConductorDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_shuntVertBlockConductorDimX = dp_shuntHorizontalBlockConductorDimY;
+-  constexpr double dp_shuntVertBlockConductorDimY = 256.*CLHEP::um;
+-  constexpr double dp_shuntVertBlockConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_shuntCenterToBottomRightCornerOfBaseLayerDimX = 555 *CLHEP::um;//617.5 * CLHEP::um;
++  const double dp_shuntCenterToBottomRightCornerOfBaseLayerDimY = 1762.118 * CLHEP::um;
++  const double dp_shuntHorizontalBlockEmptyDimX = 304. * CLHEP::um;
++  const double dp_shuntHorizontalBlockEmptyDimY = 72. * CLHEP::um;
++  const double dp_shuntHorizontalBlockEmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_shuntVertBlockEmptyDimX = dp_shuntHorizontalBlockEmptyDimY;
++  const double dp_shuntVertBlockEmptyDimY = dp_shuntHorizontalBlockEmptyDimX;
++  const double dp_shuntVertBlockEmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_shuntHorizontalBlockConductorDimX = 280. * CLHEP::um;
++  const double dp_shuntHorizontalBlockConductorDimY = 24. * CLHEP::um;
++  const double dp_shuntHorizontalBlockConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_shuntVertBlockConductorDimX = dp_shuntHorizontalBlockConductorDimY;
++  const double dp_shuntVertBlockConductorDimY = 256.*CLHEP::um;
++  const double dp_shuntVertBlockConductorDimZ = dp_groundPlaneDimZ;
+ 
+   
+   //Overall resonator assembly properties
+-  constexpr double dp_resonatorLateralSpacing = 1800*CLHEP::um + 56*CLHEP::um; //Adding arbitrary 64 um to spacing to get things to line up.
+-  constexpr double dp_centralResonatorOffsetX = -1*dp_resonatorAssemblyBaseAlDimX/2.0 + 617.5*CLHEP::um - 62*CLHEP::um; //Needs to be defined because the center of the resonator object is not the center of the square. Subtracting an additional arbitrary 68 um to the offset to get things to line up. Good enough.
++  const double dp_resonatorLateralSpacing = 1800*CLHEP::um + 56*CLHEP::um; //Adding arbitrary 64 um to spacing to get things to line up.
++  const double dp_centralResonatorOffsetX = -1*dp_resonatorAssemblyBaseAlDimX/2.0 + 617.5*CLHEP::um - 62*CLHEP::um; //Needs to be defined because the center of the resonator object is not the center of the square. Subtracting an additional arbitrary 68 um to the offset to get things to line up. Good enough.
+   
+   
+ 
+@@ -245,72 +267,72 @@
+   //----------------------------------------------------------------
+   //Flux line parameters
+ 
+-  constexpr bool dp_useFluxLines = true;
++  const bool dp_useFluxLines = !dp_radPlain();
+   
+   //Straight flux line info
+-  constexpr double dp_fluxLineBaseNbLayerDimX = 625 * CLHEP::um;
+-  constexpr double dp_fluxLineBaseNbLayerDimY = 1882.005 * CLHEP::um;
+-  constexpr double dp_fluxLineBaseNbLayerDimZ = dp_groundPlaneDimZ;
+-
+-  constexpr double dp_fluxLinePadOffsetY = 0.5*dp_fluxLineBaseNbLayerDimY - 0.5*dp_padEmptyPart1DimX;
+-
+-  constexpr double dp_fluxLineEmptyDimX = 22 * CLHEP::um;
+-  constexpr double dp_fluxLineEmptyDimY = 1140.498 * CLHEP::um;
+-  constexpr double dp_fluxLineEmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_fluxLineLineOffsetY = 0.5*dp_fluxLineBaseNbLayerDimY - dp_padEmptyPart1DimX - dp_padEmptyPart2TrdZ - 0.5*dp_fluxLineEmptyDimY;
+-  constexpr double dp_fluxLineConductorDimX = 10.15* CLHEP::um;
+-  constexpr double dp_fluxLineConductorDimY = dp_fluxLineEmptyDimY;
+-  constexpr double dp_fluxLineConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_fluxLineBaseNbLayerDimX = 625 * CLHEP::um;
++  const double dp_fluxLineBaseNbLayerDimY = 1882.005 * CLHEP::um;
++  const double dp_fluxLineBaseNbLayerDimZ = dp_groundPlaneDimZ;
++
++  const double dp_fluxLinePadOffsetY = 0.5*dp_fluxLineBaseNbLayerDimY - 0.5*dp_padEmptyPart1DimX;
++
++  const double dp_fluxLineEmptyDimX = 22 * CLHEP::um;
++  const double dp_fluxLineEmptyDimY = 1140.498 * CLHEP::um;
++  const double dp_fluxLineEmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_fluxLineLineOffsetY = 0.5*dp_fluxLineBaseNbLayerDimY - dp_padEmptyPart1DimX - dp_padEmptyPart2TrdZ - 0.5*dp_fluxLineEmptyDimY;
++  const double dp_fluxLineConductorDimX = 10.15* CLHEP::um;
++  const double dp_fluxLineConductorDimY = dp_fluxLineEmptyDimY;
++  const double dp_fluxLineConductorDimZ = dp_groundPlaneDimZ;
+ 
+ 
+   //Corner flux line info (initially made for pad closest to top left corner of qubit - will template and rotate)
+-  constexpr double dp_cornerVertFudgeFactor = 60*CLHEP::um;
+-  constexpr double dp_cornerVertFudgeFactor2 = 1 * CLHEP::um; //Need this to ensure we don't get overlaps... (i.e. lengthen the base layer but not the flux line itself)
+-  constexpr double dp_cornerFluxLineBaseNbLayerDimX = 2105.000 * CLHEP::um; //was 2102.971
+-  constexpr double dp_cornerFluxLineBaseNbLayerDimY = 1948.084 * CLHEP::um + dp_cornerVertFudgeFactor + dp_cornerVertFudgeFactor2;
+-  constexpr double dp_cornerFluxLineBaseNbLayerDimZ = dp_groundPlaneDimZ;
++  const double dp_cornerVertFudgeFactor = 60*CLHEP::um;
++  const double dp_cornerVertFudgeFactor2 = 1 * CLHEP::um; //Need this to ensure we don't get overlaps... (i.e. lengthen the base layer but not the flux line itself)
++  const double dp_cornerFluxLineBaseNbLayerDimX = 2105.000 * CLHEP::um; //was 2102.971
++  const double dp_cornerFluxLineBaseNbLayerDimY = 1948.084 * CLHEP::um + dp_cornerVertFudgeFactor + dp_cornerVertFudgeFactor2;
++  const double dp_cornerFluxLineBaseNbLayerDimZ = dp_groundPlaneDimZ;
+ 
+   
+   constexpr double cosOf45 = 0.7071067812; 
+-  constexpr double dp_cornerFluxLineCurveRadius = 100 * CLHEP::um;
+-  constexpr double dp_cornerFluxLineCurve1WrtPadPointX = cosOf45*dp_cornerFluxLineCurveRadius; //45 degree angle
+-  constexpr double dp_cornerFluxLineCurve1WrtPadPointY = cosOf45*dp_cornerFluxLineCurveRadius; //45 degree angle
+-  constexpr double dp_cornerFluxLineCurve1PadPointXWrtPadCenter = cosOf45*(0.5*dp_padEmptyPart1DimX + dp_padEmptyPart2TrdZ); //45 degree angle
+-  constexpr double dp_cornerFluxLineCurve1PadPointYWrtPadCenter = -1*cosOf45*(0.5*dp_padEmptyPart1DimX + dp_padEmptyPart2TrdZ); //45 degree angle
+-  constexpr double dp_cornerFluxLineCurve1WrtPadCenterX = dp_cornerFluxLineCurve1WrtPadPointX + dp_cornerFluxLineCurve1PadPointXWrtPadCenter;
+-  constexpr double dp_cornerFluxLineCurve1WrtPadCenterY = dp_cornerFluxLineCurve1WrtPadPointY + dp_cornerFluxLineCurve1PadPointYWrtPadCenter;
+-  constexpr double dp_cornerFluxLineHorizontalEmptyDimX = 1180.9309*CLHEP::um;
+-  constexpr double dp_cornerFluxLineHorizontalEmptyDimY = dp_fluxLineEmptyDimX;
+-  constexpr double dp_cornerFluxLineHorizontalEmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_cornerFluxLineHorizontalConductorDimX = dp_cornerFluxLineHorizontalEmptyDimX;
+-  constexpr double dp_cornerFluxLineHorizontalConductorDimY = dp_fluxLineConductorDimX;
+-  constexpr double dp_cornerFluxLineHorizontalConductorDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_cornerFluxLineVerticalEmptyDimX = dp_fluxLineEmptyDimX;
+-  constexpr double dp_cornerFluxLineVerticalEmptyDimY = 1077.31*CLHEP::um + dp_cornerVertFudgeFactor; //20 is an arbitrary add to make length match center one
+-  constexpr double dp_cornerFluxLineVerticalEmptyDimZ = dp_groundPlaneDimZ;
+-  constexpr double dp_cornerFluxLineVerticalConductorDimX = dp_fluxLineConductorDimX;
+-  constexpr double dp_cornerFluxLineVerticalConductorDimY = dp_cornerFluxLineVerticalEmptyDimY;
+-  constexpr double dp_cornerFluxLineVerticalConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_cornerFluxLineCurveRadius = 100 * CLHEP::um;
++  const double dp_cornerFluxLineCurve1WrtPadPointX = cosOf45*dp_cornerFluxLineCurveRadius; //45 degree angle
++  const double dp_cornerFluxLineCurve1WrtPadPointY = cosOf45*dp_cornerFluxLineCurveRadius; //45 degree angle
++  const double dp_cornerFluxLineCurve1PadPointXWrtPadCenter = cosOf45*(0.5*dp_padEmptyPart1DimX + dp_padEmptyPart2TrdZ); //45 degree angle
++  const double dp_cornerFluxLineCurve1PadPointYWrtPadCenter = -1*cosOf45*(0.5*dp_padEmptyPart1DimX + dp_padEmptyPart2TrdZ); //45 degree angle
++  const double dp_cornerFluxLineCurve1WrtPadCenterX = dp_cornerFluxLineCurve1WrtPadPointX + dp_cornerFluxLineCurve1PadPointXWrtPadCenter;
++  const double dp_cornerFluxLineCurve1WrtPadCenterY = dp_cornerFluxLineCurve1WrtPadPointY + dp_cornerFluxLineCurve1PadPointYWrtPadCenter;
++  const double dp_cornerFluxLineHorizontalEmptyDimX = 1180.9309*CLHEP::um;
++  const double dp_cornerFluxLineHorizontalEmptyDimY = dp_fluxLineEmptyDimX;
++  const double dp_cornerFluxLineHorizontalEmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_cornerFluxLineHorizontalConductorDimX = dp_cornerFluxLineHorizontalEmptyDimX;
++  const double dp_cornerFluxLineHorizontalConductorDimY = dp_fluxLineConductorDimX;
++  const double dp_cornerFluxLineHorizontalConductorDimZ = dp_groundPlaneDimZ;
++  const double dp_cornerFluxLineVerticalEmptyDimX = dp_fluxLineEmptyDimX;
++  const double dp_cornerFluxLineVerticalEmptyDimY = 1077.31*CLHEP::um + dp_cornerVertFudgeFactor; //20 is an arbitrary add to make length match center one
++  const double dp_cornerFluxLineVerticalEmptyDimZ = dp_groundPlaneDimZ;
++  const double dp_cornerFluxLineVerticalConductorDimX = dp_fluxLineConductorDimX;
++  const double dp_cornerFluxLineVerticalConductorDimY = dp_cornerFluxLineVerticalEmptyDimY;
++  const double dp_cornerFluxLineVerticalConductorDimZ = dp_groundPlaneDimZ;
+ 
+ 
+   /*
+-    constexpr double dp_fluxLineEmptyDimX = 22 * CLHEP::um;
+-    constexpr double dp_fluxLineEmptyDimY = 1140.498 * CLHEP::um;
+-    constexpr double dp_fluxLineEmptyDimZ = dp_groundPlaneDimZ;
+-    constexpr double dp_fluxLineLineOffsetY = 0.5*dp_fluxLineBaseNbLayerDimY - dp_padEmptyPart1DimX - dp_padEmptyPart2TrdZ - 0.5*dp_fluxLineEmptyDimY;
+-    constexpr double dp_fluxLineConductorDimX = 10.15* CLHEP::um;
+-    constexpr double dp_fluxLineConductorDimY = dp_fluxLineEmptyDimY;
+-    constexpr double dp_fluxLineConductorDimZ = dp_groundPlaneDimZ;
++    const double dp_fluxLineEmptyDimX = 22 * CLHEP::um;
++    const double dp_fluxLineEmptyDimY = 1140.498 * CLHEP::um;
++    const double dp_fluxLineEmptyDimZ = dp_groundPlaneDimZ;
++    const double dp_fluxLineLineOffsetY = 0.5*dp_fluxLineBaseNbLayerDimY - dp_padEmptyPart1DimX - dp_padEmptyPart2TrdZ - 0.5*dp_fluxLineEmptyDimY;
++    const double dp_fluxLineConductorDimX = 10.15* CLHEP::um;
++    const double dp_fluxLineConductorDimY = dp_fluxLineEmptyDimY;
++    const double dp_fluxLineConductorDimZ = dp_groundPlaneDimZ;
+   */
+ 
+ 
+   
+   //Overall flux line location parameters
+-  constexpr double dp_topCenterFluxLineOffsetX = 0;
+-  constexpr double dp_topCenterFluxLineOffsetY = 3812.378*CLHEP::um - 0.5*dp_fluxLineBaseNbLayerDimY;
+-  constexpr double dp_cornerFluxLinePadCornerDistanceFromWall = 51*CLHEP::um;
+-  constexpr double dp_topLeftFluxLineOffsetX = -0.5 * dp_groundPlaneDimX + 0.5 * dp_cornerFluxLineBaseNbLayerDimX + dp_cornerFluxLinePadCornerDistanceFromWall;
+-  constexpr double dp_topLeftFluxLineOffsetY = 0.5 * dp_groundPlaneDimY - 0.5 * dp_cornerFluxLineBaseNbLayerDimY - dp_cornerFluxLinePadCornerDistanceFromWall;
++  const double dp_topCenterFluxLineOffsetX = 0;
++  const double dp_topCenterFluxLineOffsetY = 3812.378*CLHEP::um - 0.5*dp_fluxLineBaseNbLayerDimY;
++  const double dp_cornerFluxLinePadCornerDistanceFromWall = 51*CLHEP::um;
++  const double dp_topLeftFluxLineOffsetX = -0.5 * dp_groundPlaneDimX + 0.5 * dp_cornerFluxLineBaseNbLayerDimX + dp_cornerFluxLinePadCornerDistanceFromWall;
++  const double dp_topLeftFluxLineOffsetY = 0.5 * dp_groundPlaneDimY - 0.5 * dp_cornerFluxLineBaseNbLayerDimY - dp_cornerFluxLinePadCornerDistanceFromWall;
+ 
+ 
+ 
+--- a/src/QuasiparticleDetectorConstruction.cc
++++ b/src/QuasiparticleDetectorConstruction.cc
+@@ -36,6 +36,9 @@
+ #include "G4SDManager.hh"
+ #include "G4SolidStore.hh"
+ #include "G4SystemOfUnits.hh"
++#include <cstdlib>
++#include <cmath>
++#include <string>
+ #include "G4TransportationManager.hh"
+ #include "G4Tubs.hh"
+ #include "G4UserLimits.hh"
+@@ -248,13 +251,88 @@
+   new G4CMPLogicalBorderSurface("border_siliconChip_world",phys_siliconChip,
+ 				fWorldPhys, fSiVacInterface);
+ 
++  //--------------------------------------------------------------------------
++  // RAD ADDITION (Cogitan, 2026-09-19): back-side phonon trap islands,
++  // configured at RUN TIME through environment variables so that a design
++  // sweep needs no recompilation. Set RAD_TRAP_PITCH_MM to 0 (the default) and
++  // the geometry is bit-for-bit the stock example.
++  //
++  //   RAD_TRAP_PITCH_MM   centre-to-centre island spacing, mm (0 = no traps)
++  //   RAD_TRAP_FRAC       fraction of the back face the islands cover
++  //   RAD_TRAP_ABS        phonon absorption probability per encounter
++  //   RAD_TRAP_THICK_UM   island thickness, um
++  {
++    auto radEnv = [](const char* key, double dflt) {
++      const char* v = std::getenv(key);
++      return v ? std::atof(v) : dflt;
++    };
++    const double radPitch = radEnv("RAD_TRAP_PITCH_MM", 0.0);
++    const double radFrac  = radEnv("RAD_TRAP_FRAC", 0.0);
++    const double radAbs   = radEnv("RAD_TRAP_ABS", 1.0);
++    const double radThick = radEnv("RAD_TRAP_THICK_UM", 1.0) * um;
++
++    if (radPitch > 0.0 && radFrac > 0.0) {
++      const G4double radGHz = 1e9 * hertz;
++      const std::vector<G4double> radAnh = {0, 0, 0, 0, 0, 1.51e-14};
++      const std::vector<G4double> radEmpty = {};
++      G4CMPSurfaceProperty* trapSurf =
++        // NOTE: the reflection probability is CONDITIONAL on not being
++        // absorbed, so (absorb=0.5, reflect=0.5) leaves 25% transmission into
++        // the copper, which has no registered lattice and aborts the run.
++        // Reflection must be certain; absorption is then the only escape.
++        new G4CMPSurfaceProperty("SiTrapSurf", 0.0, 1.0, 0.0, 0.0,
++                                 radAbs, 1.0, 0.0, 0.0, 0.0, 1.0);
++      trapSurf->AddScatteringProperties(520., 350., radAnh, radEmpty, radEmpty,
++                                        radGHz, radGHz, radGHz);
++
++      const double side = radPitch * std::sqrt(radFrac) * mm;
++      const double pitch = radPitch * mm;
++      G4Box* islandSolid = new G4Box("TrapIsland_solid", 0.5 * side,
++                                     0.5 * side, 0.5 * radThick);
++      G4LogicalVolume* islandLog =
++        new G4LogicalVolume(islandSolid, fCopper, "TrapIsland_log");
++      // The island must TOUCH the chip. A gap of even dp_eps puts a silicon /
++      // vacuum boundary in front of it, which reflects the phonon before it
++      // ever reaches the trap (found the hard way, 2026-09-19).
++      const double zIsland = siliconChipTranslate.z()
++                           - 0.5 * dp_siliconChipDimZ - 0.5 * radThick;
++      const int nSide = (int)std::floor(dp_siliconChipDimX / pitch);
++      int nPlaced = 0;
++      for (int i = 0; i < nSide; ++i) {
++        for (int j = 0; j < nSide; ++j) {
++          const double x = (i - 0.5 * (nSide - 1)) * pitch;
++          const double y = (j - 0.5 * (nSide - 1)) * pitch;
++          G4VPhysicalVolume* isl =
++            new G4PVPlacement(0, G4ThreeVector(x, y, zIsland), islandLog,
++                              "TrapIsland", worldLogical, false, nPlaced,
++                              false);
++          new G4CMPLogicalBorderSurface("border_chip_trap"
++                                        + std::to_string(nPlaced),
++                                        phys_siliconChip, isl, trapSurf);
++          new G4CMPLogicalBorderSurface("border_trap_chip"
++                                        + std::to_string(nPlaced),
++                                        isl, phys_siliconChip, trapSurf);
++          ++nPlaced;
++        }
++      }
++      G4cout << "RAD: " << nPlaced << " trap islands, side "
++             << side / mm << " mm, pitch " << radPitch << " mm, coverage "
++             << radFrac << ", absorption " << radAbs << G4endl;
++    } else {
++      G4cout << "RAD: no trap islands (stock geometry)" << G4endl;
++    }
++  }
++
+     
+ 
+ 
+ 
+   //--------------------------------------------------------------------------
+   //If desired, set up the copper qubit housing
+-  if (dp_useQubitHousing) {
++  // RAD: RAD_NO_HOUSING=1 omits the copper housing, which otherwise fills
++  // the space under the chip and would encapsulate any back-side trap.
++  const char* radNoHousing = std::getenv("RAD_NO_HOUSING");
++  if (dp_useQubitHousing && !(radNoHousing && std::atoi(radNoHousing))) {
+     QuasiparticleQubitHousing * qubitHousing =
+       new QuasiparticleQubitHousing(0,G4ThreeVector(0,0,0),"QubitHousing",
+                                     worldLogical,false,0,checkOverlaps);

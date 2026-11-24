@@ -1,0 +1,17 @@
+l3trap.patch
+
+This patch modifies two files from the G4CMP example `examples/quasiparticle`
+(include/QuasiparticleDetectorParameters.hh and
+src/QuasiparticleDetectorConstruction.cc), from G4CMP tag g4cmp-V10-05-00,
+https://github.com/kelseymh/G4CMP.
+
+G4CMP is distributed under the GNU General Public License v3.0. This patch, as a
+modification of those files, is distributed under the same license, GPL-3.0.
+See https://www.gnu.org/licenses/gpl-3.0.html.
+
+Modified 2026-09 to 2026-09-29: geometry parameters made readable from
+environment variables at run time (RAD_CHIP_MM, RAD_THICK_MM, RAD_PLAIN,
+RAD_TRAP_PITCH_MM, RAD_TRAP_FRAC, RAD_TRAP_ABS, RAD_TRAP_THICK_UM,
+RAD_NO_HOUSING), and back-side trap islands added.
+
+All existing copyright and license notices in the patched files are preserved.
