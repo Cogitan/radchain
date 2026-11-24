@@ -7,7 +7,8 @@ https://github.com/kelseymh/G4CMP.
 
 G4CMP is distributed under the GNU General Public License v3.0. This patch, as a
 modification of those files, is distributed under the same license, GPL-3.0.
-See https://www.gnu.org/licenses/gpl-3.0.html.
+The full license text is in COPYING in this directory
+(also at https://www.gnu.org/licenses/gpl-3.0.html).
 
 Modified 2026-09 to 2026-09-29: geometry parameters made readable from
 environment variables at run time (RAD_CHIP_MM, RAD_THICK_MM, RAD_PLAIN,

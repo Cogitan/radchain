@@ -150,7 +150,7 @@ transport configuration, so they will not match runs on the shipped backend.
 
 - Code: Apache-2.0 (`LICENSE`).
 - `g4cmp/l3trap.patch` modifies files from G4CMP's `examples/quasiparticle` and
-  is distributed under GPL-3.0, the license of G4CMP (`g4cmp/NOTICE`). The rest of
+  is distributed under GPL-3.0, the license of G4CMP (`g4cmp/NOTICE`, full text in `g4cmp/COPYING`). The rest of
   this repository reads G4CMP's output files and does not link against it.
 - Data in `src/radchain/data/`: CC BY 4.0.
 
