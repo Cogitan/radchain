@@ -1,8 +1,8 @@
 #!/bin/bash
-# l3_kernel_job.sh — one G4CMP transport-kernel job, scored and cleaned up.
+# l3_kernel_job.sh: one G4CMP transport-kernel job, scored and cleaned up.
 #
 # Runs N primary phonons from a point in the substrate, scores every
-# quasiparticle birth (= one Cooper pair broken) into a radial histogram around
+# quasiparticle birth (two per broken Cooper pair) into a radial histogram around
 # the injection point, writes JSON, and DELETES the raw step file. The raw file
 # is ~50 MB per primary phonon, so keeping them is not an option at sweep scale.
 #
@@ -16,6 +16,7 @@
 #   G4CMP_PREFIX   G4CMP install prefix                     [$HOME/opt/g4cmp-1141]
 #   GEANT4_PREFIX  Geant4 11.4.1 install prefix             [$HOME/opt/geant4-11.4.1]
 #   RAD_PYTHON     python with radchain installed           [python3]
+#   RAD_JOB_KB     optional memory cap per job, kB (see g4cmp/README.md)
 #
 # base.mac is a macro from G4CMP's examples/quasiparticle/G4Macros; the one the
 # shipped kernel record used is g4cmp/base.mac in this repository. Its
@@ -35,7 +36,7 @@ RAD_PYTHON=${RAD_PYTHON:-python3}
 # THE PATCHED BINARY, not the stock example. The stock example's
 # libg4cmpQuasiparticle.so has ZERO of the RAD_TRAP_* knobs, so pointing at it
 # runs the STOCK GEOMETRY SILENTLY and every trap sweep collapses to one
-# configuration. Build it from g4cmp/l3trap.patch -- see g4cmp/README.md.
+# configuration. Build it from g4cmp/l3trap.patch: see g4cmp/README.md.
 EXE=${RAD_EXE:-$HOME/rad/l3trap/build/g4cmpQuasiparticle}
 export G4LATTICEDATA=$G4CMP_PREFIX/share/G4CMP/CrystalMaps
 export LD_LIBRARY_PATH=$G4CMP_PREFIX/lib:$LD_LIBRARY_PATH
@@ -45,16 +46,17 @@ source "$GEANT4_PREFIX/bin/geant4.sh"
 # Two traps that each cost a wrong conclusion. Both are cheap to check and
 # neither announces itself at runtime, so check them before burning core-hours.
 #
-# 1. A binary whose detector library lacks the RAD_TRAP_* knobs ignores every
-#    trap variable and returns stock geometry. A sweep over pitch then produces
+# 1. A binary whose detector library lacks the knobs ignores every RAD_*
+#    geometry variable (traps, thickness, die size, film, housing) and returns
+#    stock geometry. A sweep over pitch then produces
 #    identical kernels and looks like a physics result.
 # 2. G4CMP built against $HOME/opt/g4cmp (not -1141) crashes at event start,
 #    and g4cmp_env.sh puts its own lib path first, so a stale libG4cmp.so can
 #    be loaded ahead of the intended one (recorded 09-15 and again 09-19).
 SO="$(dirname "$EXE")/libg4cmpQuasiparticle.so"
-if [ -n "${RAD_TRAP_PITCH_MM:-}${RAD_TRAP_FRAC:-}${RAD_TRAP_ABS:-}${RAD_TRAP_THICK_UM:-}" ]; then
+if [ -n "${RAD_TRAP_PITCH_MM:-}${RAD_TRAP_FRAC:-}${RAD_TRAP_ABS:-}${RAD_TRAP_THICK_UM:-}${RAD_THICK_MM:-}${RAD_CHIP_MM:-}${RAD_PLAIN:-}${RAD_NO_HOUSING:-}" ]; then
   if ! strings "$SO" 2>/dev/null | grep -q RAD_TRAP_PITCH_MM; then
-    echo "FATAL: RAD_TRAP_* set but $SO has no trap knobs." >&2
+    echo "FATAL: RAD_* geometry variables set but $SO has no knobs." >&2
     echo "       This binary would run STOCK geometry and ignore them." >&2
     echo "       Apply g4cmp/l3trap.patch and rebuild." >&2
     exit 3
@@ -66,7 +68,7 @@ case "$RESOLVED" in
   "") echo "WARN: could not resolve libG4cmp.so for $EXE" >&2 ;;
   *) echo "FATAL: $EXE resolves libG4cmp.so to $RESOLVED, not the -1141 install." >&2
      echo "       That build segfaults at event start. Set G4CMPINSTALL to" >&2
-     echo "       \$HOME/opt/g4cmp-1141 and rebuild." >&2
+     echo "       \$HOME/opt/g4cmp-1141/share/G4CMP and rebuild (g4cmp/README.md)." >&2
      exit 4 ;;
 esac
 

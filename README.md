@@ -26,14 +26,14 @@ was fitted to.
 | Stage | Code | Needs |
 |---|---|---|
 | Radiation transport: cryostat, die stacks, chip arrays, carriers, muon/gamma/species sources | `src/radchain/geant4/g4_*.py` | `geant4_pybind` |
-| Cached deposition spectra (Si, sapphire; several thicknesses) and thickness interpolation | `src/radchain/data/env*`, `env_grid.py` | — |
+| Cached deposition spectra (Si, sapphire; several thicknesses) and thickness interpolation | `src/radchain/data/env*`, `env_grid.py` | none |
 | Phonon transport: G4CMP build, run-time-configurable trap geometry patch, job script, kernel scorer | `g4cmp/`, `score_kernel.py`, `ingest_kernel_runs.py` | Geant4 11.4.1 + G4CMP |
-| 3,821 recorded G4CMP runs: 3,681 in the 455 configurations the backend loads (450 trap configurations, thickness × back-side trap pitch × coverage × absorption, plus 5 no-trap thicknesses), and 140 placement and sensitivity runs | `src/radchain/data/l3_kernel/runs.jsonl` | — |
-| Phonon backend interface + the G4CMP-kernel backend | `src/radchain/phonon.py` | — |
-| Per-qubit absorbed energy on any layout | `qubit_footprint.py` | — |
-| QP-induced frequency shift per device (Eq. 17 of arXiv:2506.18228; Catelani) | `qp_shift.py` | — |
-| Recovery: recombination (no traps) and trapping regimes | `recovery_google2025.py`, `qp_recovery.py` | — |
-| Burst rate cross-checks, second-device test (Li et al. 2025) | `rate_crosscheck.py`, `device2_li2025.py` | — |
+| 3,821 recorded G4CMP runs: 3,681 in the 455 configurations the backend loads (450 trap configurations, thickness × back-side trap pitch × coverage × absorption, plus 5 no-trap thicknesses), and 140 placement and sensitivity runs | `src/radchain/data/l3_kernel/runs.jsonl` | none |
+| Phonon backend interface + the G4CMP-kernel backend | `src/radchain/phonon.py` | none |
+| Per-qubit absorbed energy on any layout | `qubit_footprint.py` | none |
+| Quasiparticle (QP) frequency shift per device (Eq. 17 of arXiv:2506.18228; Catelani et al., PRB 84, 064517 (2011)) | `qp_shift.py` | none |
+| Recovery: recombination (no traps) and trapping regimes | `recovery_google2025.py`, `qp_recovery.py` | none |
+| Burst rate cross-checks, second-device test (Li et al., Nat. Commun. 16, 4677 (2025), arXiv:2402.04245) | `rate_crosscheck.py`, `device2_li2025.py` | none |
 | Logical failure per event: surface-code memory under the burst, decoded | `analysis/rad_pfail_physics.py` | `stim`, `pymatching` |
 | Cross-chip erasure, code blocks, erasure policies, bootstrap intervals | `analysis/rad_*.py` | per-event deposit data and `rad_pfail_*` results (below) |
 | The sweep launchers that produced the data | `scripts/sweeps/` | WSL/Linux, Geant4 |
@@ -54,8 +54,9 @@ python -m radchain.qubit_footprint          # Willow-class footprint on G4CMP ke
 python analysis/rad_pfail_physics.py --d 5 --events 50 --shots 500 --workers 4   # ~6 min
 ```
 
-In the footprint table, the last column names the pre-registered band(s) a row
-fails ("size", "large", "both"), or PASS.
+In the footprint table, the last column names the fixed band(s) a row fails
+("size", "large", "both"), or PASS. The bands are set in `qubit_footprint.py`; the
+record of when they were fixed is not part of this release.
 
 Phonon hits for any simulated configuration:
 
@@ -81,11 +82,12 @@ size, housing, film pattern; see `scripts/sweeps/run_trap_grid*.sh` and
 
 Downstream stages only need, for a strike at the origin, the positions where
 pair-breaking energy lands (`phonon.py` documents the contract). The shipped
-backend draws them from the recorded G4CMP kernels: exact for what was
-simulated, no interpolation, and it refuses configurations that were not
-simulated. In the shipped record G4CMP took 0.4-3 s per primary phonon with
-back-side traps and up to about 2 minutes without them; with no phonon sink at
-all it took over 20 minutes (`g4cmp/README.md`).
+backend draws them from the recorded G4CMP kernels (binned in radius and
+averaged over azimuth), with no interpolation, and it refuses configurations
+that were not simulated. In the shipped record G4CMP took 0.4-3 s per primary
+phonon with back-side traps and up to about 2 minutes without them. The
+record's `pair_breaks` fields count quasiparticle births, two per broken pair;
+the backend charges each one the film gap.
 
 Other transport models can be registered with `phonon.register_backend(...)` or
 the `radchain.phonon_backends` entry-point group, and every stage then uses them
@@ -96,31 +98,39 @@ it is not part of this repository.
 
 - **The trap grid was simulated on a 4 mm die** with a plain film and no
   housing, so those kernels stop near 2 mm from the strike. The no-trap kernels
-  come from G4CMP's stock 8 mm example with its housing. Neither is a
-  production qubit die.
-- **The raw stock kernels do not reproduce Willow's burst-size distribution**
+  use G4CMP's example geometry (8 mm die with its housing); only the 0.381 mm
+  one is the unmodified example, and the other thicknesses need the patch.
+  Neither is a production qubit die.
+- **The no-trap kernels do not reproduce Willow's burst-size distribution**
   (arXiv:2506.18228). `python -m radchain.qubit_footprint` shows median sizes of
   4 to 20 of 60 qubits across thickness and spectrum, against 15 measured, and
-  no row passes both pre-registered bands. The stock geometry differs from
+  no row passes both fixed bands. The example geometry differs from
   Willow's (no carrier chip, a different housing). The grade is printed rather
   than tuned until it passes.
 - **The response coefficient is tied to the transport that fitted it.**
   `qp_shift.K_WILLOW_KHZ_PER_KEV` (44.89 kHz/keV) is fitted to Willow's 2 MHz
-  median peak with the shipped backend on the no-trap 0.381 mm kernel. It is the
-  device's response and stays fixed when you change the design (traps,
-  thickness). Refit it only when you change the transport model, and then on its
-  no-trap reference (`rad_pfail_physics.py --fit-k-reference`), never on a
-  trapped design, or you scale the traps' effect back out.
-- **Willow's response does not transfer as-is to other devices.** On Pinckney
-  et al.'s gap-engineered array (arXiv:2603.13460), a Willow-calibrated
-  response over-predicts the measured frequency shifts by more than an order of
-  magnitude. The cause is unresolved.
+  median peak with the shipped backend on the no-trap 0.381 mm kernel and the
+  gamma-lines deposit spectrum at 0.3 mm (8 seeds of 3000 strikes; see
+  `qp_shift.py`). It is the device's response and stays fixed when you change
+  the design (traps, thickness). Refit it only when you change the transport
+  model, with `qubit_footprint.fit_k` on that model's no-trap reference, never on
+  a trapped design, or you scale the traps' effect back out.
+  `rad_pfail_physics.py --fit-k-reference` also refits it, but with its own
+  deposit mix (gamma lines plus muons at 0.5 mm), so it does not return 44.89
+  on the shipped backend.
+- **Willow's response does not transfer as-is to other devices.** In Cogitan's
+  own tests, made with its own transport model and not part of this release, a
+  Willow-calibrated response over-predicted the frequency shifts measured on a
+  gap-engineered array by Pinckney et al. (arXiv:2603.13460) by more than an
+  order of magnitude. The cause is unresolved, and nothing here shows the
+  shipped backend transfers either.
 - The quasiparticle-birth kernel is axisymmetric (azimuth-averaged) and taken at
   one strike depth and primary phonon energy. A few runs (`s3_*`, `s4_*` tags)
   probe sensitivity.
 - Births within 30 um of the strike are recorded by the scorer only as a count;
-  the backend places them uniformly within 30 um. They are 0.3-4% of births in
-  the no-trap kernels and up to ~18% in thin trapped ones.
+  the backend places them uniformly within 30 um. They are 0.04-3.7% of births
+  in the no-trap kernels (the most at 0.1 mm) and up to ~18% in thin trapped
+  ones.
 - The no-trap kernels include reflection at the simulated 8 mm die's edge, so
   for strikes near the edge of a larger die the outer geometry is approximate.
 - Some docstrings mention pre-registered tests and earlier file locations from
@@ -141,8 +151,9 @@ deposits) and `RADCHAIN_PY` (a Python with `geant4_pybind`).
 `d7_conv0.5_echo`, `d7_conv1.0_echo` and `d7_conv0.5_noecho` (plus d5/d11 for
 `--distance`). Produce them with `rad_pfail_physics.py --d 7 --conv ... [--noecho]`
 (hours each at the default 150 events x 1000 shots), or copy the paper's from
-`bench/results/` in the data record. The paper's were made with an earlier
-transport configuration, so they will not match runs on the shipped backend.
+`bench/results/` in the data record. The paper's were made with Cogitan's own
+transport model, which is not in this repository, so they will not match runs
+on the shipped backend.
 
 ## Papers and data
 
@@ -161,9 +172,13 @@ fix.
 ## License
 
 - Code: Apache-2.0 (`LICENSE`).
-- `g4cmp/l3trap.patch` modifies files from G4CMP's `examples/quasiparticle` and
-  is distributed under GPL-3.0, the license of G4CMP (`g4cmp/NOTICE`, full text in `g4cmp/COPYING`). The rest of
-  this repository reads G4CMP's output files and does not link against it.
-- Data in `src/radchain/data/`: CC BY 4.0.
+- `g4cmp/l3trap.patch` and `g4cmp/base.mac` modify files from G4CMP's
+  `examples/quasiparticle` and are distributed under GPL-3.0, the license of
+  G4CMP (`g4cmp/NOTICE`, full text in `g4cmp/COPYING`). Neither is in the Python
+  package. The rest of this repository reads G4CMP's output files and does not
+  link against it.
+- Data in `src/radchain/data/`: CC BY 4.0
+  (https://creativecommons.org/licenses/by/4.0/); credit "Cogitan, radchain"
+  (`NOTICE`).
 
 G4CMP: M.H. Kelsey et al., NIM A 1055, 168473 (2023).

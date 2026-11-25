@@ -3,7 +3,7 @@ l3trap.patch
 This patch modifies two files from the G4CMP example `examples/quasiparticle`
 (include/QuasiparticleDetectorParameters.hh and
 src/QuasiparticleDetectorConstruction.cc), from G4CMP tag g4cmp-V10-05-00,
-https://github.com/kelseymh/G4CMP.
+https://github.com/G4CMP/G4CMP.
 
 G4CMP is distributed under the GNU General Public License v3.0. This patch, as a
 modification of those files, is distributed under the same license, GPL-3.0.

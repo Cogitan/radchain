@@ -30,9 +30,9 @@ holds 450 trap configurations).
 
 Two files, four hunks:
 
-- `include/QuasiparticleDetectorParameters.hh` -- the parameter block becomes
+- `include/QuasiparticleDetectorParameters.hh`: the parameter block becomes
   `const` values computed by getenv-backed inline accessors.
-- `src/QuasiparticleDetectorConstruction.cc` -- back-side trap islands and the
+- `src/QuasiparticleDetectorConstruction.cc`: back-side trap islands and the
   copper housing are built according to those values.
 
 | variable | effect |
@@ -46,7 +46,7 @@ Two files, four hunks:
 | `RAD_TRAP_THICK_UM` | island thickness |
 | `RAD_NO_HOUSING` | omit the copper housing |
 
-**What depends on this patch.** The placement arms and the whole trap grid in `src/radchain/data/l3_kernel/runs.jsonl`,
+**What depends on this patch.** The placement arms, the whole trap grid and the no-trap kernels at thicknesses other than 0.381 mm (`RAD_THICK_MM`) in `src/radchain/data/l3_kernel/runs.jsonl`,
 which the `g4cmp-kernel` phonon backend draws from.
 
 ### Apply and build
@@ -96,22 +96,24 @@ RAD_TRAP_PITCH_MM=0 ./build/g4cmpQuasiparticle <macro>               # bit-for-b
 
 The stock example's `libg4cmpQuasiparticle.so` has **zero** occurrences of
 `RAD_TRAP_PITCH_MM`. That is the check `l3_kernel_job.sh` runs, because a
-binary without the knobs does not complain -- it returns stock geometry, so a
+binary without the knobs does not complain: it returns stock geometry, so a
 sweep over pitch produces identical kernels and reads like a physics result.
 
 ## Guards in `l3_kernel_job.sh`
 
 | exit | condition |
 |---|---|
-| 3 | `RAD_TRAP_*` is set but the detector library has no trap knobs |
+| 3 | a `RAD_*` geometry variable is set but the detector library has no knobs |
 | 4 | `libG4cmp.so` resolves outside the `-1141` install |
+| 5 | no G4CMP macro at `RAD_BASE_MAC` (default: `g4cmp/base.mac`) |
 
 The ldd check runs **after** the script exports `LD_LIBRARY_PATH`, so it tests
 what will actually be loaded rather than what the binary was linked against.
 An env override that fixes a bad link is fine; a bad link with no override is
 not.
 
-`RAD_EXE` overrides the binary, defaulting to `$HOME/rad/l3trap/build/`.
+`RAD_EXE` overrides the binary, defaulting to
+`$HOME/rad/l3trap/build/g4cmpQuasiparticle`.
 
 ## Other traps, recorded so they are not rediscovered
 
@@ -126,5 +128,6 @@ not.
   no-housing case where phonons live long enough that 22 concurrent jobs
   OOM-killed a sweep. Keep parallelism low enough for your RAM.
 - **Cost depends enormously on whether the geometry has a phonon sink**: 0.66 s
-  per primary with back-side traps, 58.88 s with housing and no traps, 1200+ s
-  with no sink at all. Quote the configuration with any cost or speedup figure.
+  per primary with back-side traps, 58.88 s with housing and no traps (both in
+  the shipped record). With no sink at all, an earlier test that is not in the
+  record ran past 1200 s per primary. Quote the configuration with any cost or speedup figure.

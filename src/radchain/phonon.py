@@ -50,8 +50,8 @@ LIMITS OF THE G4CMP BACKEND, STATED UP FRONT
 - The scorer bins radii from 30 um to 8 mm and records births outside that
   range only as a count (``outside_binning``). On the simulated dies none can
   lie beyond 8 mm, so they are all within 30 um of the strike; they are kept
-  as an inner bin, drawn uniformly over a 30 um disc. They are 0.3-4% of
-  births in the stock kernels and up to ~18% in thin trapped configurations.
+  as an inner bin, drawn uniformly over a 30 um disc. They are 0.04-3.7% of
+  births in the no-trap kernels and up to ~18% in thin trapped configurations.
 - Only the ``g_*`` (trap grid) and ``kt_*`` (stock) tag families are loaded.
   Runs with other tags are ignored. Runs pooled under one tag must share strike
   position and primary energy (checked). Die size, housing and film pattern are

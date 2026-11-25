@@ -1,7 +1,8 @@
-"""score_kernel.py — G4CMP step dump -> transport kernel, then throw the dump away.
+"""score_kernel.py: G4CMP step dump -> transport kernel, then throw the dump away.
 
-ONE QUASIPARTICLE BIRTH = ONE COOPER PAIR BROKEN, at the position where it was
-born. That is the quantity the chain consumes: energy absorbed
+ONE QUASIPARTICLE BIRTH, at the position where it was born. A broken Cooper pair
+gives two, so the fields named pair_breaks count quasiparticles, not pairs (the
+names are kept so the recorded data stay readable). That is the quantity the chain consumes: energy absorbed
 in the pair-breaking film, as a function of lateral offset from the strike.
 
 So the kernel is the radial histogram of first-appearance positions of

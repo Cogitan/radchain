@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: GPL-3.0
 # From G4CMP g4cmp-V10-05-00, examples/quasiparticle/G4Macros/quasiparticle_resonator_targeted.mac
-# (https://github.com/kelseymh/G4CMP), GPL-3.0; see NOTICE and COPYING in this directory.
+# (https://github.com/G4CMP/G4CMP), GPL-3.0; see NOTICE and COPYING in this directory.
 # Changed for radchain: visualisation commands removed, source at (0, 0, 4.81) mm, one event.
 # l3_kernel_job.sh replaces /gps/energy, /gps/pos/centre, /gps/number and /run/beamOn per job.
 # The shipped kernel record was made with this macro without these six header lines (sha256 919eb424...).
