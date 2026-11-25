@@ -98,31 +98,33 @@ it is not part of this repository.
 
 - **The trap grid was simulated on a 4 mm die** with a plain film and no
   housing, so those kernels stop near 2 mm from the strike. The no-trap kernels
-  use G4CMP's example geometry (8 mm die with its housing); only the 0.381 mm
-  one is the unmodified example, and the other thicknesses need the patch.
+  use G4CMP's example geometry (8 mm die with its housing). All five were run
+  on the patched binary; at 0.381 mm its default settings give the example's
+  own thickness.
   Neither is a production qubit die.
 - **The no-trap kernels do not reproduce Willow's burst-size distribution**
-  (arXiv:2506.18228). `python -m radchain.qubit_footprint` shows median sizes of
-  4 to 20 of 60 qubits across thickness and spectrum, against 15 measured, and
+  (arXiv:2506.18228). `python -m radchain.qubit_footprint` grades four of the
+  five thicknesses and shows median sizes of 4 to 20 of 60 qubits across
+  thickness and spectrum, against 15 measured, and
   no row passes both fixed bands. The example geometry differs from
   Willow's (no carrier chip, a different housing). The grade is printed rather
   than tuned until it passes.
 - **The response coefficient is tied to the transport that fitted it.**
   `qp_shift.K_WILLOW_KHZ_PER_KEV` (44.89 kHz/keV) is fitted to Willow's 2 MHz
-  median peak with the shipped backend on the no-trap 0.381 mm kernel and the
-  gamma-lines deposit spectrum at 0.3 mm (8 seeds of 3000 strikes; see
+  median peak with the shipped backend on the no-trap 0.381 mm kernel, using
+  Geant4 gamma-line deposits in a 0.3 mm die (8 seeds of 3000 strikes; see
   `qp_shift.py`). It is the device's response and stays fixed when you change
   the design (traps, thickness). Refit it only when you change the transport
-  model, with `qubit_footprint.fit_k` on that model's no-trap reference, never on
-  a trapped design, or you scale the traps' effect back out.
-  `rad_pfail_physics.py --fit-k-reference` also refits it, but with its own
-  deposit mix (gamma lines plus muons at 0.5 mm), so it does not return 44.89
-  on the shipped backend.
+  model: pass `qubit_footprint.fit_k` the per-event absorbed energies from that
+  model's no-trap reference, never from a trapped design, or you scale the traps'
+  effect back out. `rad_pfail_physics.py --fit-k-reference` also refits it, but
+  with its own deposit mix (gamma lines plus 18.4% muons, 0.5 mm die), so it does
+  not return 44.89 on the shipped backend.
 - **Willow's response does not transfer as-is to other devices.** In Cogitan's
   own tests, made with its own transport model and not part of this release, a
-  Willow-calibrated response over-predicted the frequency shifts measured on a
-  gap-engineered array by Pinckney et al. (arXiv:2603.13460) by more than an
-  order of magnitude. The cause is unresolved, and nothing here shows the
+  Willow-calibrated response over-predicted the frequency shifts on Pinckney et
+  al.'s JJ-Only array (arXiv:2603.13460, Fig. 13(b): below 100 kHz at deposits
+  of 57 to 699 keV) by 16 to 80 times, depending on energy and statistic. The cause is unresolved, and nothing here shows the
   shipped backend transfers either.
 - The quasiparticle-birth kernel is axisymmetric (azimuth-averaged) and taken at
   one strike depth and primary phonon energy. A few runs (`s3_*`, `s4_*` tags)

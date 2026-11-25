@@ -46,7 +46,7 @@ Two files, four hunks:
 | `RAD_TRAP_THICK_UM` | island thickness |
 | `RAD_NO_HOUSING` | omit the copper housing |
 
-**What depends on this patch.** The placement arms, the whole trap grid and the no-trap kernels at thicknesses other than 0.381 mm (`RAD_THICK_MM`) in `src/radchain/data/l3_kernel/runs.jsonl`,
+**What depends on this patch.** The placement arms, the whole trap grid and the no-trap thickness series (`RAD_THICK_MM`; all five thicknesses were run on the patched binary) in `src/radchain/data/l3_kernel/runs.jsonl`,
 which the `g4cmp-kernel` phonon backend draws from.
 
 ### Apply and build

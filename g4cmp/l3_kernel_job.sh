@@ -16,7 +16,7 @@
 #   G4CMP_PREFIX   G4CMP install prefix                     [$HOME/opt/g4cmp-1141]
 #   GEANT4_PREFIX  Geant4 11.4.1 install prefix             [$HOME/opt/geant4-11.4.1]
 #   RAD_PYTHON     python with radchain installed           [python3]
-#   RAD_JOB_KB     optional memory cap per job, kB (see g4cmp/README.md)
+#   RAD_JOB_KB     optional ulimit -v per job, kB (see g4cmp/README.md)
 #
 # base.mac is a macro from G4CMP's examples/quasiparticle/G4Macros; the one the
 # shipped kernel record used is g4cmp/base.mac in this repository. Its
