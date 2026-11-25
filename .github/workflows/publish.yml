@@ -1,7 +1,8 @@
 name: publish
 
 # Push a tag vX.Y.Z whose number matches pyproject.toml to build and upload to PyPI.
-# PyPI trusts this workflow (trusted publishing): no token is stored anywhere.
+# Uploads through PyPI trusted publishing: the maintainer registers this workflow
+# (publish.yml, environment pypi) as a trusted publisher on PyPI first. No API token is used.
 
 on:
   push:
