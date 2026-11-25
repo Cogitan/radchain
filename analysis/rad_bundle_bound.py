@@ -39,7 +39,7 @@ CONSERVATIVE in three stated ways (all push the bound UP):
   - q for electrons is taken equal to q for muons (shower electrons that survive
     the fridge are MIP-like; low-energy ones would stop before the chip).
 
-    python bench/rad_bundle_bound.py
+    python analysis/rad_bundle_bound.py
 """
 from __future__ import annotations
 
@@ -141,6 +141,7 @@ def main():
     for name, spec in SPECTRA.items():
         print(f"{name}: R2_hit = {spectrum_r2(spec):.2e}/h "
               f"for two 1 cm2 chips (any separation << shower scale)")
+    os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
     json.dump(out, open(os.path.join(HERE, "results", "rad_bundle_bound.json"), "w"),
               indent=1)
 

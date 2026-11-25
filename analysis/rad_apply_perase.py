@@ -1,6 +1,6 @@
 """Apply the physics erasure curve P_erase(E) to the correlated-erasure studies.
 
-P_erase(E) comes from bench/rad_pfail_physics.py (results/rad_pfail_<tag>.json):
+P_erase(E) comes from analysis/rad_pfail_physics.py (results/rad_pfail_<tag>.json):
 binned, UNCLIPPED mean of (f_burst - f_base)/(1 - f_base) over strike positions;
 negative or unresolved bins -> 0; made monotone; log-log interpolation; above
 the last bin, extrapolated on the last two bins' slope, capped at 1.
@@ -23,7 +23,7 @@ E* proxy sat between them):
 Outputs per layout: lam (per chip, /h), p2 = P(>= 2 erased | >= 1), p3, and
 Xu's [[4,1,2]] / [[7,1,3]] suppression claimed vs achieved (tau 1 ms).
 
-    python bench/rad_apply_perase.py [--tag d7_conv0.5_echo]
+    python analysis/rad_apply_perase.py [--tag d7_conv0.5_echo]
 """
 from __future__ import annotations
 
@@ -149,6 +149,7 @@ def main():
                           f"achieved {x2['suppression_achieved']:.3g} | "
                           f"[[7,1,3]] claimed {x3['suppression_claimed']:.3g} "
                           f"achieved {x3['suppression_achieved']:.3g}")
+    os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
     json.dump({"tag": a.tag, "curve": curve, "rows": rows},
               open(os.path.join(HERE, "results", f"rad_apply_perase_{a.tag}.json"),
                    "w"), indent=1, default=float)

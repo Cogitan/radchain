@@ -1,7 +1,5 @@
 # radchain: from a particle strike to logical errors in superconducting qubit chips
 
-*Working name.*
-
 `radchain` is an open, end-to-end simulation of how ionising radiation turns into
 correlated errors on a superconducting quantum processor:
 
@@ -43,6 +41,13 @@ was fitted to.
 ## Quick start
 
 ```bash
+pip install "radchain[analysis]"
+```
+
+or, to run the tests, the analysis scripts and the sweeps, from a clone:
+
+```bash
+git clone https://github.com/Cogitan/radchain && cd radchain
 pip install -e ".[analysis,test]"
 pytest
 python -m radchain.qubit_footprint          # Willow-class footprint on G4CMP kernels (~5 min)
@@ -118,8 +123,8 @@ it is not part of this repository.
   the no-trap kernels and up to ~18% in thin trapped ones.
 - The no-trap kernels include reflection at the simulated 8 mm die's edge, so
   for strikes near the edge of a larger die the outer geometry is approximate.
-- Some docstrings mention pre-registered tests and old `bench/` paths from the
-  research history. Those records are not part of this release; the paper
+- Some docstrings mention pre-registered tests and earlier file locations from
+  the research history. Those records are not part of this release; the paper
   below covers the published results.
 
 ## Data not in git
@@ -145,6 +150,13 @@ transport configuration, so they will not match runs on the shipped backend.
   modular superconducting processors: a simulation study* (2026).
   doi:10.5281/zenodo.24412996
 - Data and code: doi:10.5281/zenodo.24412856
+
+## Status
+
+1.0.0. The interfaces above (`phonon.get_backend`, `film_hits`,
+`register_backend`, the `radchain.phonon_backends` entry point) are kept stable
+within 1.x. The limits listed above are open questions, not bugs scheduled for a
+fix.
 
 ## License
 

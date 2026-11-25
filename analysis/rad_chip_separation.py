@@ -1,6 +1,6 @@
 """Chip-separation study: does p2 fall once a code's chips are cm apart?
 
-Data: bench/rad_data/pairs/<layout>_<source>_<seed>.json (run_pair_sweep.sh);
+Data: analysis/rad_data/pairs/<layout>_<source>_<seed>.json (run_pair_sweep.sh);
 `--live` reads the WSL output directory instead, for a partial look.
 
 p2 = R(both chips >= E*) / R(at least one chip >= E*), muons with the fridge
@@ -8,7 +8,7 @@ p2 = R(both chips >= E*) / R(at least one chip >= E*), muons with the fridge
 they were run (P1, Q50). Intervals are exact Poisson on the coincidence count;
 zero coincidences give a one-sided 95% upper limit (3.0 / singles).
 
-    python bench/rad_chip_separation.py [--live]
+    python analysis/rad_chip_separation.py [--live]
 """
 from __future__ import annotations
 
@@ -135,6 +135,7 @@ def main(live: bool):
                       f"both {(a & b).sum()} at E* 0.5 MeV")
     if not live:
         out = {L: {str(k): v for k, v in r.items()} for L, r in rows.items()}
+        os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
         json.dump(out, open(os.path.join(HERE, "results",
                                          "rad_chip_separation.json"), "w"),
                   indent=1, default=float)

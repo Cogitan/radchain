@@ -1,6 +1,6 @@
 """Code-block study: one Xu et al. [[4,1,2]] block of 5 chips (4 data + ancilla).
 
-Data: bench/rad_data/block/<layout>_<source>_<seed>.json (run_block_sweep.sh).
+Data: analysis/rad_data/block/<layout>_<source>_<seed>.json (run_block_sweep.sh).
 
 Per event, each of the 5 chips is lost with probability P(E_chip); the block
 fails from that event with P(>= 2 of 5 lost) (Poisson-binomial). Rates:
@@ -13,7 +13,7 @@ fails from that event with P(>= 2 of 5 lost) (Poisson-binomial). Rates:
 Verdict (counts, E* = 0.5 MeV step): events with >= 2 chips, X1 vs XQ50,
 exact Poisson intervals.
 
-    python bench/rad_code_block.py
+    python analysis/rad_code_block.py
 """
 from __future__ import annotations
 
@@ -106,6 +106,7 @@ def main():
                      f"(x{ref / r['G_corr_per_h'] if r['G_corr_per_h'] else float('inf'):.0f}) "
                      f"achieved {r['achieved']:.3g} / claimed {r['claimed']:.3g}")
         print(line)
+    os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
     json.dump(out, open(os.path.join(HERE, "results", "rad_code_block.json"), "w"),
               indent=1, default=float)
 

@@ -7,7 +7,7 @@ few large-deposit events drive each weighted reading. Uses the pooled mono
 data by default; --data DIR points at another directory (e.g. the spectrum
 set assembled with the existing gamma files).
 
-    python bench/rad_block_bootstrap.py [--n 300] [--data DIR] [--seed 1]
+    python analysis/rad_block_bootstrap.py [--n 300] [--data DIR] [--seed 1]
 """
 from __future__ import annotations
 
@@ -85,6 +85,7 @@ def main():
         out[name] = {"central": central, "lo95": lo, "hi95": hi}
         print(f"{name:20s} reduction {central:6.1f}x  95% bootstrap {lo:6.1f}-{hi:6.1f}x")
     tag = "distance" if a.distance else ("spectrum" if a.data else "pooled")
+    os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
     json.dump(out, open(os.path.join(HERE, "results", f"rad_block_bootstrap_{tag}.json"), "w"),
               indent=1, default=float)
 

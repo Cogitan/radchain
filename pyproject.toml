@@ -4,12 +4,25 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "radchain"
-version = "0.1.0"
+version = "1.0.0"
 description = "End-to-end radiation -> phonon -> quasiparticle -> logical-error simulation for superconducting qubit chips"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0 AND CC-BY-4.0"
+license-files = ["LICENSE", "NOTICE"]
+authors = [{name = "Cogitan"}]
+keywords = ["superconducting qubits", "radiation", "cosmic rays", "quasiparticles", "phonons", "Geant4", "G4CMP", "quantum error correction"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Physics",
+]
 dependencies = ["numpy>=1.26", "scipy>=1.11"]
+
+[project.urls]
+Homepage = "https://github.com/Cogitan/radchain"
+Issues = "https://github.com/Cogitan/radchain/issues"
 
 [project.optional-dependencies]
 analysis = ["stim>=1.13", "pymatching>=2.2", "matplotlib>=3.8"]

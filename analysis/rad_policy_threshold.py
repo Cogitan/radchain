@@ -23,7 +23,7 @@ Protection is lam_loss over the failure rate, as there.
 `--legacy` reproduces rad_erasure_policy exactly (losses zeroed below T) at
 T = 180 keV, as a check of this code.
 
-    python bench/rad_policy_threshold.py [--legacy]
+    python analysis/rad_policy_threshold.py [--legacy]
 """
 from __future__ import annotations
 
@@ -129,6 +129,7 @@ def main():
     if not a.legacy:
         name = "rad_policy_threshold" + ("_floorT" if a.floor_at_threshold else
                                          f"_floor{a.floor:.0f}" if a.floor else "") + ".json"
+        os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
         path = os.path.join(HERE, "results", name)
         json.dump(out, open(path + ".tmp", "w"), indent=1)
         os.replace(path + ".tmp", path)

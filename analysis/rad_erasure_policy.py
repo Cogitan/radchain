@@ -1,6 +1,6 @@
 """Erasure policy for a cross-chip [[4,1,2]] block: flag-all vs oracle vs soft.
 
-Data: code-block Geant4 events (bench/rad_data/block, rad_code_block.load) and
+Data: code-block Geant4 events (analysis/rad_data/block, rad_code_block.load) and
 physics loss curves (rad_apply_perase.perase_curve; P_loss = min(1, 2 P_flip)).
 
 Per event (5 chips, deposits E_i): flagged F_i = [E_i >= 180 keV]; lost with
@@ -11,7 +11,7 @@ P_loss below 180 keV is ~0 and is zeroed for consistency).
   SOFT-RANKED  fail with P(>= 2 lost) + sum_j P(only j lost) [j != argmax P]
   SOFT-RANDOM  fail with P(>= 2 lost) + sum_j P(only j lost) (1 - 1/n_flag)
 
-    python bench/rad_erasure_policy.py
+    python analysis/rad_erasure_policy.py
 """
 from __future__ import annotations
 
@@ -95,6 +95,7 @@ def main():
             out.setdefault(tag, {})[L] = {"lam_loss_h": lam_loss,
                                           "lam_flag_h": lam_flag,
                                           "fail_per_h": fail}
+    os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
     json.dump(out, open(os.path.join(HERE, "results", "rad_erasure_policy.json"),
                         "w"), indent=1)
 

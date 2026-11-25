@@ -1,6 +1,6 @@
 """Chip-scale correlated erasure: rates, p2, and Xu's lifetime with and without it.
 
-Data: bench/rad_data/chips/<layout>_<source>_<seed>.json (run_chip_sweep.sh).
+Data: analysis/rad_data/chips/<layout>_<source>_<seed>.json (run_chip_sweep.sh).
 
 A chip is ERASED when one event deposits >= E* in it. Per layout and E*:
   lam   single-chip erasure rate, per chip (/s)
@@ -16,7 +16,7 @@ Xu et al. (PRL 129, 240502) for an [[n,1,d]] code over chips of this kind:
                code uses fewer than all 9 chips)
   suppression = lam / (Gamma_ind + Gamma_corr) against one monolithic chip.
 
-    python bench/rad_chip_erasure.py [layout ...]
+    python analysis/rad_chip_erasure.py [layout ...]
 """
 from __future__ import annotations
 
