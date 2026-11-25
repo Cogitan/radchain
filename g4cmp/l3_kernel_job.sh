@@ -10,13 +10,15 @@
 #
 # Environment (defaults in brackets):
 #   RAD_ROOT       work dir: jobs/, out/, base.mac          [$HOME/rad/kernel]
-#   RAD_BASE_MAC   G4CMP macro the job macro is built from  [$RAD_ROOT/base.mac]
+#   RAD_BASE_MAC   G4CMP macro the job macro is built from  [$RAD_ROOT/base.mac if it
+#                  exists, else base.mac next to this script]
 #   RAD_EXE        patched g4cmpQuasiparticle binary        [$HOME/rad/l3trap/build/...]
 #   G4CMP_PREFIX   G4CMP install prefix                     [$HOME/opt/g4cmp-1141]
 #   GEANT4_PREFIX  Geant4 11.4.1 install prefix             [$HOME/opt/geant4-11.4.1]
 #   RAD_PYTHON     python with radchain installed           [python3]
 #
-# base.mac is a macro from G4CMP's examples/quasiparticle/G4Macros. Its
+# base.mac is a macro from G4CMP's examples/quasiparticle/G4Macros; the one the
+# shipped kernel record used is g4cmp/base.mac in this repository. Its
 # /gps/energy, /gps/pos/centre, /gps/number and /run/beamOn lines are
 # replaced per job, so only its physics and output settings matter. It must
 # enable the quasiparticle step-information output the scorer reads.
@@ -26,6 +28,7 @@ set -e
 TAG=$1; X=$2; Y=$3; Z=$4; E=$5; N=$6; SEED=$7
 ROOT=${RAD_ROOT:-$HOME/rad/kernel}
 BASE_MAC=${RAD_BASE_MAC:-$ROOT/base.mac}
+[ -n "${RAD_BASE_MAC:-}" ] || [ -f "$BASE_MAC" ] || BASE_MAC="$(cd "$(dirname "$0")" && pwd)/base.mac"
 G4CMP_PREFIX=${G4CMP_PREFIX:-$HOME/opt/g4cmp-1141}
 GEANT4_PREFIX=${GEANT4_PREFIX:-$HOME/opt/geant4-11.4.1}
 RAD_PYTHON=${RAD_PYTHON:-python3}

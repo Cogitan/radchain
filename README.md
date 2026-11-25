@@ -68,8 +68,8 @@ hx, hy = b.film_hits(n_phonons=200_000, thickness_mm=0.6,
 ```
 
 To simulate a geometry that is not in the record, build G4CMP with the patch
-(`g4cmp/README.md`), run `g4cmp/l3_kernel_job.sh` (it needs a G4CMP macro from
-`examples/quasiparticle/G4Macros` as `RAD_BASE_MAC`; see the script header), and
+(`g4cmp/README.md`), run `g4cmp/l3_kernel_job.sh` (by default with
+`g4cmp/base.mac`, the G4CMP macro the shipped record used; see the script header), and
 add the result with `python -m radchain.ingest_kernel_runs --src <dir>`. That
 writes into the package's own `data/l3_kernel/runs.jsonl`, so use an editable
 install. The backend loads only the `g_*` (trap grid) and `kt_*` (no-trap) tag

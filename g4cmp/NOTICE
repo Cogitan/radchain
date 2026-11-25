@@ -16,3 +16,9 @@ RAD_TRAP_PITCH_MM, RAD_TRAP_FRAC, RAD_TRAP_ABS, RAD_TRAP_THICK_UM,
 RAD_NO_HOUSING), and back-side trap islands added.
 
 All existing copyright and license notices in the patched files are preserved.
+
+base.mac
+
+G4CMP's examples/quasiparticle/G4Macros/quasiparticle_resonator_targeted.mac from the
+same tag, distributed under GPL-3.0. Changed: visualisation commands removed, the
+source placed at (0, 0, 4.81) mm, one event per run, and a header added.
