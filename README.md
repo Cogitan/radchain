@@ -1,5 +1,7 @@
 # radchain: from a particle strike to logical errors in superconducting qubit chips
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24570012.svg)](https://doi.org/10.5281/zenodo.24570012)
+
 `radchain` is an open, end-to-end simulation of how ionising radiation turns into
 correlated errors on a superconducting quantum processor:
 
@@ -163,6 +165,7 @@ on the shipped backend.
   modular superconducting processors: a simulation study* (2026).
   doi:10.5281/zenodo.24412996
 - Data and code: doi:10.5281/zenodo.24412856
+- This software (all versions): doi:10.5281/zenodo.24570012
 
 ## Status
 
