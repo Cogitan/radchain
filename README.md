@@ -166,7 +166,7 @@ on the shipped backend.
 
 ## Status
 
-1.0.0. The interfaces above (`phonon.get_backend`, `film_hits`,
+1.0.1 (1.0.0 plus citation files for Zenodo). The interfaces above (`phonon.get_backend`, `film_hits`,
 `register_backend`, the `radchain.phonon_backends` entry point) are kept stable
 within 1.x. The limits listed above are open questions, not bugs scheduled for a
 fix.

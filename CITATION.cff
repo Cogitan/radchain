@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use radchain, please cite it as below."
+title: "radchain"
+abstract: >-
+  An open, end-to-end simulation of how ionising radiation turns into
+  correlated errors on a superconducting quantum processor: Geant4 radiation
+  transport, G4CMP phonon transport, analytic quasiparticle frequency shift and
+  recovery, and Stim/PyMatching decoding of surface-code memory under the burst.
+type: software
+authors:
+  - family-names: Henderson
+    given-names: Dylan
+    affiliation: Cogitan
+    orcid: "https://orcid.org/0009-0009-7022-4986"
+version: 1.0.1
+date-released: 2026-11-26
+license: Apache-2.0
+repository-code: "https://github.com/Cogitan/radchain"
+url: "https://github.com/Cogitan/radchain"
+keywords:
+  - superconducting qubits
+  - ionizing radiation
+  - quasiparticles
+  - phonons
+  - Geant4
+  - G4CMP
+  - quantum error correction
+references:
+  - type: article
+    status: preprint
+    title: >-
+      Correlated radiation erasures limit cross-chip erasure codes in modular
+      superconducting processors: a simulation study
+    authors:
+      - family-names: Henderson
+        given-names: Dylan
+        orcid: "https://orcid.org/0009-0009-7022-4986"
+    year: 2026
+    doi: 10.5281/zenodo.24412996

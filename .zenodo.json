@@ -1,0 +1,42 @@
+{
+  "title": "radchain: from a particle strike to logical errors in superconducting qubit chips",
+  "upload_type": "software",
+  "description": "<p>An open, end-to-end simulation of how ionising radiation turns into correlated errors on a superconducting quantum processor: Geant4 radiation transport, G4CMP phonon transport, analytic quasiparticle frequency shift and recovery, and Stim/PyMatching decoding of surface-code memory under the burst. It shares the Geant4 geometry and the erasure analysis of the preprint doi:10.5281/zenodo.24412996, but that paper's results were made with Cogitan's own phonon transport model, which is not in this repository, so they will not match runs on the shipped backend. Known limits are stated in the README, including that the no-trap kernels do not reproduce Willow's burst-size distribution and that the Willow-calibrated response does not transfer as-is to other devices.</p><p>Installation: <code>pip install \"radchain[analysis]\"</code>. Code: Apache-2.0. The G4CMP patch and macro in g4cmp/: GPL-3.0. Data in src/radchain/data/: CC BY 4.0.</p>",
+  "creators": [
+    {
+      "name": "Henderson, Dylan",
+      "affiliation": "Cogitan",
+      "orcid": "0009-0009-7022-4986"
+    }
+  ],
+  "license": "apache-2.0",
+  "keywords": [
+    "superconducting qubits",
+    "ionizing radiation",
+    "quasiparticles",
+    "phonons",
+    "Geant4",
+    "G4CMP",
+    "quantum error correction"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/Cogitan/radchain/tree/v1.0.1",
+      "relation": "isSupplementTo",
+      "resource_type": "software",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.5281/zenodo.24412996",
+      "relation": "isSupplementTo",
+      "resource_type": "publication-preprint",
+      "scheme": "doi"
+    },
+    {
+      "identifier": "10.5281/zenodo.24412856",
+      "relation": "references",
+      "resource_type": "dataset",
+      "scheme": "doi"
+    }
+  ]
+}
